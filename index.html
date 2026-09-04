@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>設計調整沙盒</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <span>設計調整沙盒</span>
+  <span class="hint">貼上網址、上傳檔案，或貼上原始碼開始</span>
+</div>
+
+<!-- #/empty -->
+<section class="state active" data-state="empty">
+  <div class="center-stage">
+    <div class="dropzone">
+      <h2 id="emptyTitle">載入你的頁面</h2>
+      <p>貼上已發佈的公開網址（例如 GitHub Pages），或直接上傳 HTML 檔案。</p>
+
+      <div class="input-row">
+        <input type="text" id="urlInput" placeholder="https://your-project.github.io/...">
+        <button class="btn" data-action="import-url">匯入</button>
+      </div>
+
+      <div class="divider">或</div>
+      <label class="file-label">
+        上傳 HTML 檔案
+        <input type="file" id="fileInput" accept=".html,.htm" hidden>
+      </label>
+
+      <div class="divider">或</div>
+      <button class="btn-ghost btn full" data-action="toggle-paste">貼上 HTML 原始碼</button>
+      <div id="pasteBox" class="paste-box hidden">
+        <textarea id="pasteInput" rows="6" placeholder="在瀏覽器打開目標網頁 → 右鍵「檢視網頁原始碼」→ 全選複製 → 貼在這裡"></textarea>
+        <button class="btn full" data-action="import-paste">載入原始碼</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- #/importing -->
+<section class="state" data-state="importing">
+  <div class="center-stage">
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <p class="muted">正在讀取網頁結構…</p>
+    </div>
+  </div>
+</section>
+
+<!-- #/error -->
+<section class="state" data-state="error">
+  <div class="center-stage">
+    <div class="error-box">
+      <h2>無法載入這個網址</h2>
+      <p id="errorMsg"></p>
+      <button class="btn" data-action="go-empty">重新輸入</button>
+    </div>
+  </div>
+</section>
+
+<!-- #/workspace -->
+<section class="state" data-state="workspace">
+  <div class="workspace">
+    <div class="canvas-pane">
+      <div class="layout-tabs" id="layoutTabs"></div>
+      <div class="canvas-toolbar">
+        <div class="mode-toggle" id="modeToggle">
+          <button class="mode-btn active" data-mode="edit">編輯模式</button>
+          <button class="mode-btn" data-mode="preview">預覽模式</button>
+        </div>
+        <p class="mode-hint" id="modeHint">點擊畫面中的元素即可選取並調整樣式</p>
+        <div class="style-controls">
+          <select id="stylePresetSelect"><option value="">套用風格…</option></select>
+          <button class="btn-ghost btn" data-action="save-style-preset">另存為風格</button>
+        </div>
+      </div>
+      <iframe id="previewFrame" sandbox="allow-same-origin allow-scripts"></iframe>
+    </div>
+
+    <aside class="toolbar-pane">
+      <div class="toolbar-header">調整面板</div>
+      <div class="sel-info hidden" id="selInfo"></div>
+
+      <div class="toolbar-scroll">
+        <p class="empty-hint" id="emptyHint">點擊左側預覽中的任何元素，即可在這裡即時調整它的樣式與內容。</p>
+
+        <div id="fieldsWrap" class="hidden">
+
+          <details class="acc-item" open data-acc="color">
+            <summary class="acc-head">色彩</summary>
+            <div class="acc-body row-3">
+              <label class="field"><span>背景色</span><input type="color" id="f-bg"></label>
+              <label class="field"><span>文字顏色</span><input type="color" id="f-color"></label>
+              <label class="field"><span>邊框顏色</span><input type="color" id="f-border"></label>
+            </div>
+          </details>
+
+          <details class="acc-item" open data-acc="typography">
+            <summary class="acc-head">字型</summary>
+            <div class="acc-body">
+              <label class="field"><span>字型家族</span>
+                <select id="f-font">
+                  <option value="">保留原字型</option>
+                  <option value="Inter, sans-serif">Inter</option>
+                  <option value="Sora, sans-serif">Sora</option>
+                  <option value="Georgia, serif">Georgia（襯線）</option>
+                  <option value="Arial, sans-serif">Arial</option>
+                  <option value="ui-monospace, monospace">等寬字</option>
+                </select>
+              </label>
+              <label class="field"><span>字級 <b id="f-size-val" class="range-val"></b></span>
+                <input type="range" id="f-size" min="10" max="72"></label>
+              <label class="field"><span>字重</span>
+                <select id="f-weight">
+                  <option value="400">Regular 400</option>
+                  <option value="500">Medium 500</option>
+                  <option value="600">Semibold 600</option>
+                  <option value="700">Bold 700</option>
+                </select>
+              </label>
+            </div>
+          </details>
+
+          <details class="acc-item" open data-acc="spacing">
+            <summary class="acc-head">間距與尺寸</summary>
+            <div class="acc-body">
+              <label class="field"><span>內邊距 Padding <b id="f-pad-val" class="range-val"></b></span>
+                <input type="range" id="f-pad" min="0" max="64"></label>
+              <label class="field"><span>外邊距 Margin（上下） <b id="f-mar-val" class="range-val"></b></span>
+                <input type="range" id="f-mar" min="0" max="64"></label>
+
+              <label class="field"><span>寬度</span>
+                <select id="f-width-mode">
+                  <option value="">自動（跟著內容大小，不設定）</option>
+                  <option value="px">固定寬度（像素 px）</option>
+                  <option value="%">依比例（百分比 %）</option>
+                </select>
+              </label>
+              <label class="field hidden" id="widthValueWrap">
+                <span>寬度數值 <b id="f-width-unit" class="range-val"></b></span>
+                <input type="number" id="f-width-value" min="0" step="1" placeholder="例如 400">
+              </label>
+            </div>
+          </details>
+
+          <details class="acc-item" open data-acc="layout">
+            <summary class="acc-head">版面對齊</summary>
+            <div class="acc-body">
+              <div class="field">
+                <span>文字對齊</span>
+                <div class="btn-group" id="alignGroup">
+                  <button data-align="left">靠左</button>
+                  <button data-align="center">置中</button>
+                  <button data-align="right">靠右</button>
+                </div>
+              </div>
+              <label class="checkbox-row">
+                <input type="checkbox" id="f-flex">
+                <span>將子元素設為 Flex 排列</span>
+              </label>
+              <div class="row-2 hidden" id="flexControls">
+                <label class="field"><span>主軸對齊</span>
+                  <select id="f-justify">
+                    <option value="flex-start">靠起點</option>
+                    <option value="center">置中</option>
+                    <option value="flex-end">靠終點</option>
+                    <option value="space-between">平均分散</option>
+                  </select>
+                </label>
+                <label class="field"><span>交叉軸對齊</span>
+                  <select id="f-align-items">
+                    <option value="stretch">延展</option>
+                    <option value="flex-start">靠起點</option>
+                    <option value="center">置中</option>
+                    <option value="flex-end">靠終點</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc-item" open data-acc="interactive">
+            <summary class="acc-head">互動與動畫</summary>
+            <div class="acc-body">
+              <label class="field"><span>Hover 背景色</span><input type="color" id="f-hover"></label>
+              <label class="field"><span>過渡時間 <b id="f-trans-val" class="range-val"></b></span>
+                <input type="range" id="f-trans" min="0" max="800" step="20"></label>
+            </div>
+          </details>
+
+          <details class="acc-item" open data-acc="content">
+            <summary class="acc-head">內容與元素</summary>
+            <div class="acc-body">
+              <label class="field hidden" id="textFieldWrap"><span>文字內容</span>
+                <textarea id="f-text"></textarea></label>
+              <label class="field hidden" id="imgFieldWrap"><span>圖片網址</span>
+                <input type="text" id="f-imgsrc"></label>
+              <label class="field hidden" id="hrefFieldWrap"><span>連結網址</span>
+                <input type="text" id="f-href"></label>
+              <div class="row-2">
+                <label class="field"><span>Class</span><input type="text" id="f-class"></label>
+                <label class="field"><span>ID</span><input type="text" id="f-id"></label>
+              </div>
+              <div class="field">
+                <span>元素操作</span>
+                <div class="op-row">
+                  <button data-op="up"><span class="icon" aria-hidden="true">↑</span><span>上移</span></button>
+                  <button data-op="down"><span class="icon" aria-hidden="true">↓</span><span>下移</span></button>
+                  <button data-op="duplicate"><span class="icon" aria-hidden="true">⧉</span><span>複製</span></button>
+                  <button data-op="delete" class="danger"><span class="icon" aria-hidden="true">✕</span><span>刪除</span></button>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc-item hidden" id="tokensSection" data-acc="tokens">
+            <summary class="acc-head">Design Tokens</summary>
+            <div class="acc-body">
+              <div id="tokensBody"></div>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <div class="flow-actions">
+        <button class="btn-ghost btn icon-btn" data-action="restart">
+          <span class="icon" aria-hidden="true">←</span><span>重新匯入</span>
+        </button>
+        <button class="btn-ghost btn icon-btn" id="undoBtn" data-action="undo" disabled>
+          <span class="icon" aria-hidden="true">↺</span><span>復原</span>
+        </button>
+        <button class="btn icon-btn" data-action="export">
+          <span class="icon" aria-hidden="true">⬇</span><span>下載 HTML</span>
+        </button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
