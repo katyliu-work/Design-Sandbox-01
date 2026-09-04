@@ -69,7 +69,6 @@ body{margin:0;font-family:var(--font-body);font-size:var(--fs-body);background:v
 /* icon + label — icon is always >=24px and lives in its own element, never
    packed into the text run, so button width never has to fight text wrap. */
 .icon{font-size:var(--icon-size);line-height:1;display:inline-flex;align-items:center;justify-content:center;}
-.icon-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;white-space:nowrap;}
 
 .spinner{width:32px;height:32px;border:3px solid var(--border-color);border-top-color:var(--accent);border-radius:50%;margin:0 auto 16px;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -134,5 +133,14 @@ body{margin:0;font-family:var(--font-body);font-size:var(--fs-body);background:v
 .op-row button.danger:hover{background:#fbe6e6;border-color:#e0a0a0;}
 .op-row .icon{font-size:var(--icon-size);}
 
-.flow-actions{padding:14px 18px;border-top:1px solid var(--border-color);display:flex;justify-content:space-between;gap:8px;}
-.flow-actions .btn,.flow-actions .btn-ghost{font-size:var(--fs-body);padding:12px 8px;}
+.flow-actions{padding:14px 18px;border-top:1px solid var(--border-color);display:flex;justify-content:space-between;gap:10px;}
+.flow-actions .btn,.flow-actions .btn-ghost{
+  flex:1;font-size:var(--fs-body);font-weight:600;padding:13px 8px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;white-space:nowrap;
+}
+.flow-actions .btn-ghost{background:var(--bg-surface);border:2px solid var(--accent);color:var(--accent);}
+.flow-actions .btn-ghost:hover{background:var(--accent-tint);}
+.flow-actions .btn-ghost:disabled{border-color:var(--border-color);color:var(--text-secondary);opacity:1;}
+.flow-actions .btn-ghost:disabled:hover{background:var(--bg-surface);}
+.flow-actions .btn{background:var(--accent);color:#fff;border:2px solid var(--accent);}
+.flow-actions .btn:hover{background:var(--accent-hover);border-color:var(--accent-hover);}
