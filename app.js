@@ -1,6 +1,210 @@
 'use strict';
 
 /* ============================================================
+   i18n — one dictionary, two languages. Static HTML text uses
+   data-i18n attributes; anything generated in JS goes through t().
+   ============================================================ */
+const I18N = {
+  en: {
+    topbar_brand: 'Design Sandbox',
+    topbar_hint: 'Paste a URL, upload a file, or paste source to begin.',
+    empty_title: 'Load your page',
+    empty_title_add: 'Add another layout',
+    empty_desc: 'Paste a published public URL (e.g. GitHub Pages), or upload an HTML file directly.',
+    import_btn: 'Import',
+    or_divider: 'or',
+    upload_label: 'Upload HTML file',
+    paste_toggle: 'Paste HTML source',
+    paste_placeholder: 'Open the page in your browser → right-click "View Page Source" → select all, copy → paste here',
+    paste_load_btn: 'Load source',
+    importing_text: 'Reading page structure…',
+    error_title: "Couldn't load this URL",
+    error_retry_btn: 'Try again',
+    error_cors: 'Couldn\'t read this URL ({message}). This usually means the site doesn\'t allow other pages to read its content — that\'s a browser security rule, not something this tool can get around. Try "Upload HTML file" or "Paste HTML source" instead — both work regardless.',
+    error_file: "Couldn't read the file. Please make sure it's a .html file.",
+    mode_edit: 'Edit mode',
+    mode_preview: 'Preview mode',
+    mode_hint_edit: 'Click any element in the preview to select and adjust it.',
+    mode_hint_preview: 'Preview mode: buttons, tabs, checkboxes and other interactions work as the original page designed.',
+    layout_add_title: 'Add layout',
+    layout_rename_title: 'Double-click to rename',
+    layout_rename_prompt: 'Name this layout',
+    layout_default_name: 'Layout {n}',
+    style_apply_placeholder: 'Apply style…',
+    style_save_btn: 'Save as style',
+    style_save_prompt: 'Name this style',
+    style_no_tokens_alert: "No shared colors/values (CSS custom properties) were detected on this layout, so there's nothing to save as a style.",
+    style_default_name: 'Style {n}',
+    toolbar_header: 'Adjustment panel',
+    empty_hint: 'Click any element in the preview on the left to adjust its style and content here.',
+    sec_color: 'Color',
+    sec_typography: 'Typography',
+    sec_spacing: 'Spacing & Size',
+    sec_layout: 'Layout',
+    sec_interactive: 'Interaction & Motion',
+    sec_content: 'Content & Elements',
+    lbl_bg: 'Background',
+    lbl_text_color: 'Text color',
+    lbl_border_color: 'Border color',
+    lbl_font_family: 'Font family',
+    font_keep_original: 'Keep original',
+    font_georgia: 'Georgia (serif)',
+    font_mono_option: 'Monospace',
+    lbl_font_size: 'Font size',
+    lbl_font_weight: 'Font weight',
+    caption_small: 'small',
+    caption_large: 'large',
+    lbl_padding: 'Padding',
+    lbl_margin: 'Margin (top/bottom)',
+    caption_tight: 'tight',
+    caption_spacious: 'spacious',
+    lbl_width: 'Width',
+    width_auto: 'Auto (based on content)',
+    width_px: 'Fixed width (px)',
+    width_percent: 'Relative (%)',
+    lbl_width_value: 'Width value',
+    width_value_placeholder: 'e.g. 400',
+    lbl_text_align: 'Text align',
+    align_left: 'Left',
+    align_center: 'Center',
+    align_right: 'Right',
+    lbl_flex_toggle: 'Arrange children with Flex',
+    lbl_justify: 'Main axis align',
+    justify_start: 'Start',
+    justify_center: 'Center',
+    justify_end: 'End',
+    justify_between: 'Space between',
+    lbl_align_items: 'Cross axis align',
+    align_items_stretch: 'Stretch',
+    lbl_hover_bg: 'Hover background',
+    lbl_transition: 'Transition duration',
+    caption_instant: 'instant',
+    caption_slow: 'slow',
+    lbl_text_content: 'Text content',
+    lbl_image_url: 'Image URL',
+    lbl_link_url: 'Link URL',
+    lbl_element_ops: 'Element actions',
+    op_up: 'Move up',
+    op_down: 'Move down',
+    op_duplicate: 'Duplicate',
+    op_delete: 'Delete',
+    btn_restart: 'Restart',
+    btn_undo: 'Undo',
+    btn_download: 'Download HTML',
+  },
+  zh: {
+    topbar_brand: '設計調整沙盒',
+    topbar_hint: '貼上網址、上傳檔案，或貼上原始碼開始',
+    empty_title: '載入你的頁面',
+    empty_title_add: '新增另一個版面',
+    empty_desc: '貼上已發佈的公開網址（例如 GitHub Pages），或直接上傳 HTML 檔案。',
+    import_btn: '匯入',
+    or_divider: '或',
+    upload_label: '上傳 HTML 檔案',
+    paste_toggle: '貼上 HTML 原始碼',
+    paste_placeholder: '在瀏覽器打開目標網頁 → 右鍵「檢視網頁原始碼」→ 全選複製 → 貼在這裡',
+    paste_load_btn: '載入原始碼',
+    importing_text: '正在讀取網頁結構…',
+    error_title: '無法載入這個網址',
+    error_retry_btn: '重新輸入',
+    error_cors: '讀不到這個網址的內容（{message}）。通常是對方網站設定不允許被其他網頁讀取——這是瀏覽器的安全機制，不是這個工具的問題，也沒辦法從這裡繞過去。建議改用「上傳 HTML 檔案」或「貼上 HTML 原始碼」，這兩種方式完全不受影響。',
+    error_file: '檔案讀取失敗，請確認檔案格式為 .html。',
+    mode_edit: '編輯模式',
+    mode_preview: '預覽模式',
+    mode_hint_edit: '點擊畫面中的元素即可選取並調整樣式',
+    mode_hint_preview: '預覽模式：畫面中的按鈕、分頁、勾選框等互動會照原本網頁的設計運作',
+    layout_add_title: '新增版面',
+    layout_rename_title: '雙擊可重新命名',
+    layout_rename_prompt: '幫這個版面取個名字',
+    layout_default_name: '版面{n}',
+    style_apply_placeholder: '套用風格…',
+    style_save_btn: '另存為風格',
+    style_save_prompt: '幫這組風格取個名字',
+    style_no_tokens_alert: '這個版面沒有偵測到共用的顏色／數值設定（CSS 自訂變數），沒有東西可以存成風格。',
+    style_default_name: '風格{n}',
+    toolbar_header: '調整面板',
+    empty_hint: '點擊左側預覽中的任何元素，即可在這裡即時調整它的樣式與內容。',
+    sec_color: '色彩',
+    sec_typography: '字型',
+    sec_spacing: '間距與尺寸',
+    sec_layout: '版面對齊',
+    sec_interactive: '互動與動畫',
+    sec_content: '內容與元素',
+    lbl_bg: '背景色',
+    lbl_text_color: '文字顏色',
+    lbl_border_color: '邊框顏色',
+    lbl_font_family: '字型家族',
+    font_keep_original: '保留原字型',
+    font_georgia: 'Georgia（襯線）',
+    font_mono_option: '等寬字',
+    lbl_font_size: '字級',
+    lbl_font_weight: '字重',
+    caption_small: '小',
+    caption_large: '大',
+    lbl_padding: '內邊距 Padding',
+    lbl_margin: '外邊距 Margin（上下）',
+    caption_tight: '緊湊',
+    caption_spacious: '寬鬆',
+    lbl_width: '寬度',
+    width_auto: '自動（跟著內容大小，不設定）',
+    width_px: '固定寬度（像素 px）',
+    width_percent: '依比例（百分比 %）',
+    lbl_width_value: '寬度數值',
+    width_value_placeholder: '例如 400',
+    lbl_text_align: '文字對齊',
+    align_left: '靠左',
+    align_center: '置中',
+    align_right: '靠右',
+    lbl_flex_toggle: '將子元素設為 Flex 排列',
+    lbl_justify: '主軸對齊',
+    justify_start: '靠起點',
+    justify_center: '置中',
+    justify_end: '靠終點',
+    justify_between: '平均分散',
+    lbl_align_items: '交叉軸對齊',
+    align_items_stretch: '延展',
+    lbl_hover_bg: 'Hover 背景色',
+    lbl_transition: '過渡時間',
+    caption_instant: '瞬間',
+    caption_slow: '緩慢',
+    lbl_text_content: '文字內容',
+    lbl_image_url: '圖片網址',
+    lbl_link_url: '連結網址',
+    lbl_element_ops: '元素操作',
+    op_up: '上移',
+    op_down: '下移',
+    op_duplicate: '複製',
+    op_delete: '刪除',
+    btn_restart: '重新匯入',
+    btn_undo: '復原',
+    btn_download: '下載 HTML',
+  },
+};
+
+let lang = 'en';
+
+function t(key, vars) {
+  let str = (I18N[lang] && I18N[lang][key]) ?? I18N.en[key] ?? key;
+  if (vars) Object.entries(vars).forEach(([k, v]) => { str = str.replace(`{${k}}`, v); });
+  return str;
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+  document.getElementById('modeHint').textContent = editMode ? t('mode_hint_edit') : t('mode_hint_preview');
+  document.getElementById('emptyTitle').textContent = addingNewLayout ? t('empty_title_add') : t('empty_title');
+  renderLayoutTabs();
+  renderStylePresets(document.getElementById('stylePresetSelect').value);
+}
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+  applyTranslations();
+}
+
+/* ============================================================
    Module state
    ============================================================ */
 let selected = null;       // currently selected element inside the iframe
@@ -44,10 +248,7 @@ function importFromUrl() {
   setState('importing');
   fetch(url)
     .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.text().then(html => handleImportedHtml(html, r.url)); })
-    .catch(err => showImportError(
-      `讀不到這個網址的內容（${err.message}）。通常是對方網站設定不允許被其他網頁讀取——這是瀏覽器的安全機制，不是這個工具的問題，也沒辦法從這裡繞過去。` +
-      `建議改用「上傳 HTML 檔案」或「貼上 HTML 原始碼」，這兩種方式完全不受影響。`
-    ));
+    .catch(err => showImportError(t('error_cors', { message: err.message })));
 }
 
 function importFromFile(evt) {
@@ -56,7 +257,7 @@ function importFromFile(evt) {
   setState('importing');
   const reader = new FileReader();
   reader.onload = e => handleImportedHtml(e.target.result);
-  reader.onerror = () => showImportError('檔案讀取失敗，請確認檔案格式為 .html。');
+  reader.onerror = () => showImportError(t('error_file'));
   reader.readAsText(file);
   evt.target.value = ''; // allow re-selecting the same file later
 }
@@ -82,7 +283,7 @@ function handleImportedHtml(html, url) {
     addingNewLayout = false;
     addLayout(html, url);
   } else {
-    layouts = [{ id: makeId(), name: '版面1', html, sourceUrl: url || null }];
+    layouts = [{ id: makeId(), name: t('layout_default_name', { n: 1 }), html, sourceUrl: url || null }];
     activeLayoutIndex = 0;
     stylePresets = [];
     renderStylePresets();
@@ -147,7 +348,7 @@ function loadIntoFrame(html, url) {
 const restoreDoc = html => reloadFrame(html, 'undo');
 
 function addLayout(html, url) {
-  layouts.push({ id: makeId(), name: `版面${layouts.length + 1}`, html, sourceUrl: url || null });
+  layouts.push({ id: makeId(), name: t('layout_default_name', { n: layouts.length + 1 }), html, sourceUrl: url || null });
   switchToLayout(layouts.length - 1);
 }
 
@@ -165,7 +366,7 @@ function switchToLayout(index) {
 
 function startAddLayout() {
   addingNewLayout = true;
-  document.getElementById('emptyTitle').textContent = '新增另一個版面';
+  document.getElementById('emptyTitle').textContent = t('empty_title_add');
   setState('empty');
 }
 
@@ -176,7 +377,7 @@ function renderLayoutTabs() {
     const btn = document.createElement('button');
     btn.className = 'layout-tab' + (i === activeLayoutIndex ? ' active' : '');
     btn.textContent = layout.name;
-    btn.title = '雙擊可重新命名';
+    btn.title = t('layout_rename_title');
     btn.addEventListener('click', () => switchToLayout(i));
     btn.addEventListener('dblclick', () => renameLayout(i));
     wrap.appendChild(btn);
@@ -184,13 +385,13 @@ function renderLayoutTabs() {
   const addBtn = document.createElement('button');
   addBtn.className = 'layout-tab-add';
   addBtn.textContent = '+';
-  addBtn.title = '新增版面';
+  addBtn.title = t('layout_add_title');
   addBtn.addEventListener('click', startAddLayout);
   wrap.appendChild(addBtn);
 }
 
 function renameLayout(index) {
-  const name = window.prompt('幫這個版面取個名字', layouts[index].name);
+  const name = window.prompt(t('layout_rename_prompt'), layouts[index].name);
   if (name && name.trim()) {
     layouts[index].name = name.trim();
     renderLayoutTabs();
@@ -287,13 +488,12 @@ function selectElement(el) {
 function setEditMode(mode) {
   editMode = mode === 'edit';
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
-  document.getElementById('modeHint').textContent = editMode
-    ? '點擊畫面中的元素即可選取並調整樣式'
-    : '預覽模式：畫面中的按鈕、分頁、勾選框等互動會照原本網頁的設計運作';
+  document.getElementById('modeHint').textContent = editMode ? t('mode_hint_edit') : t('mode_hint_preview');
   if (!editMode) clearSelection();
 }
 
 function clearSelection() {
+  if (selected) selected.classList.remove('sbx-selected');
   selected = null;
   document.getElementById('emptyHint').classList.remove('hidden');
   document.getElementById('fieldsWrap').classList.add('hidden');
@@ -509,10 +709,10 @@ function saveStylePreset() {
   const doc = frame().contentDocument;
   const tokens = readRootTokens(doc);
   if (Object.keys(tokens).length === 0) {
-    alert('這個版面沒有偵測到共用的顏色／數值設定（CSS 自訂變數），沒有東西可以存成風格。');
+    alert(t('style_no_tokens_alert'));
     return;
   }
-  const name = window.prompt('幫這組風格取個名字', `風格${stylePresets.length + 1}`);
+  const name = window.prompt(t('style_save_prompt'), t('style_default_name', { n: stylePresets.length + 1 }));
   if (!name || !name.trim()) return;
   stylePresets.push({ id: makeId(), name: name.trim(), tokens });
   renderStylePresets(stylePresets[stylePresets.length - 1].id);
@@ -529,7 +729,7 @@ function applyStylePreset(id) {
 
 function renderStylePresets(selectedId) {
   const select = document.getElementById('stylePresetSelect');
-  select.innerHTML = '<option value="">套用風格…</option>' +
+  select.innerHTML = `<option value="">${t('style_apply_placeholder')}</option>` +
     stylePresets.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
   if (selectedId) select.value = selectedId;
 }
@@ -596,6 +796,11 @@ function normalizeWeight(w) {
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   syncFromHash();
+  applyTranslations();
+
+  document.querySelectorAll('.lang-btn').forEach(btn =>
+    btn.addEventListener('click', () => setLang(btn.dataset.lang))
+  );
 
   // buttons identified by data-action
   document.querySelectorAll('[data-action]').forEach(el => {
@@ -606,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'go-empty': () => setState('empty'), // used by the error screen's retry — must not disturb addingNewLayout
       'restart': () => {
         addingNewLayout = false;
-        document.getElementById('emptyTitle').textContent = '載入你的頁面';
+        document.getElementById('emptyTitle').textContent = t('empty_title');
         setState('empty');
       },
       'undo': undo,

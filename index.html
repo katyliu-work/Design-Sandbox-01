@@ -1,44 +1,50 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>設計調整沙盒</title>
+<title>Design Sandbox</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="topbar">
-  <span>設計調整沙盒</span>
-  <span class="hint">貼上網址、上傳檔案，或貼上原始碼開始</span>
+  <span class="brand" data-i18n="topbar_brand">Design Sandbox</span>
+  <div class="topbar-right">
+    <span class="hint" data-i18n="topbar_hint">Paste a URL, upload a file, or paste source to begin.</span>
+    <div class="lang-toggle" id="langToggle">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+    </div>
+  </div>
 </div>
 
 <!-- #/empty -->
 <section class="state active" data-state="empty">
   <div class="center-stage">
     <div class="dropzone">
-      <h2 id="emptyTitle">載入你的頁面</h2>
-      <p>貼上已發佈的公開網址（例如 GitHub Pages），或直接上傳 HTML 檔案。</p>
+      <h2 id="emptyTitle" data-i18n="empty_title">Load your page</h2>
+      <p data-i18n="empty_desc">Paste a published public URL (e.g. GitHub Pages), or upload an HTML file directly.</p>
 
       <div class="input-row">
         <input type="text" id="urlInput" placeholder="https://your-project.github.io/...">
-        <button class="btn" data-action="import-url">匯入</button>
+        <button class="btn" data-action="import-url" data-i18n="import_btn">Import</button>
       </div>
 
-      <div class="divider">或</div>
-      <label class="file-label">
-        上傳 HTML 檔案
+      <div class="divider" data-i18n="or_divider">or</div>
+      <label class="file-label" data-i18n="upload_label">
+        Upload HTML file
         <input type="file" id="fileInput" accept=".html,.htm" hidden>
       </label>
 
-      <div class="divider">或</div>
-      <button class="btn-ghost btn full" data-action="toggle-paste">貼上 HTML 原始碼</button>
+      <div class="divider" data-i18n="or_divider">or</div>
+      <button class="btn-ghost btn full" data-action="toggle-paste" data-i18n="paste_toggle">Paste HTML source</button>
       <div id="pasteBox" class="paste-box hidden">
-        <textarea id="pasteInput" rows="6" placeholder="在瀏覽器打開目標網頁 → 右鍵「檢視網頁原始碼」→ 全選複製 → 貼在這裡"></textarea>
-        <button class="btn full" data-action="import-paste">載入原始碼</button>
+        <textarea id="pasteInput" rows="6" data-i18n-placeholder="paste_placeholder" placeholder="Open the page in your browser → right-click &quot;View Page Source&quot; → select all, copy → paste here"></textarea>
+        <button class="btn full" data-action="import-paste" data-i18n="paste_load_btn">Load source</button>
       </div>
     </div>
   </div>
@@ -49,7 +55,7 @@
   <div class="center-stage">
     <div class="loading-box">
       <div class="spinner"></div>
-      <p class="muted">正在讀取網頁結構…</p>
+      <p class="muted" data-i18n="importing_text">Reading page structure…</p>
     </div>
   </div>
 </section>
@@ -58,9 +64,9 @@
 <section class="state" data-state="error">
   <div class="center-stage">
     <div class="error-box">
-      <h2>無法載入這個網址</h2>
+      <h2 data-i18n="error_title">Couldn't load this URL</h2>
       <p id="errorMsg"></p>
-      <button class="btn" data-action="go-empty">重新輸入</button>
+      <button class="btn" data-action="go-empty" data-i18n="error_retry_btn">Try again</button>
     </div>
   </div>
 </section>
@@ -72,52 +78,54 @@
       <div class="layout-tabs" id="layoutTabs"></div>
       <div class="canvas-toolbar">
         <div class="mode-toggle" id="modeToggle">
-          <button class="mode-btn active" data-mode="edit">編輯模式</button>
-          <button class="mode-btn" data-mode="preview">預覽模式</button>
+          <button class="mode-btn active" data-mode="edit" data-i18n="mode_edit">Edit mode</button>
+          <button class="mode-btn" data-mode="preview" data-i18n="mode_preview">Preview mode</button>
         </div>
-        <p class="mode-hint" id="modeHint">點擊畫面中的元素即可選取並調整樣式</p>
+        <p class="mode-hint" id="modeHint" data-i18n="mode_hint_edit">Click any element in the preview to select and adjust it.</p>
         <div class="style-controls">
-          <select id="stylePresetSelect"><option value="">套用風格…</option></select>
-          <button class="btn-ghost btn" data-action="save-style-preset">另存為風格</button>
+          <select id="stylePresetSelect"><option value="" data-i18n="style_apply_placeholder">Apply style…</option></select>
+          <button class="btn-ghost btn" data-action="save-style-preset" data-i18n="style_save_btn">Save as style</button>
         </div>
       </div>
       <iframe id="previewFrame" sandbox="allow-same-origin allow-scripts"></iframe>
     </div>
 
     <aside class="toolbar-pane">
-      <div class="toolbar-header">調整面板</div>
+      <div class="toolbar-header" data-i18n="toolbar_header">Adjustment panel</div>
       <div class="sel-info hidden" id="selInfo"></div>
 
       <div class="toolbar-scroll">
-        <p class="empty-hint" id="emptyHint">點擊左側預覽中的任何元素，即可在這裡即時調整它的樣式與內容。</p>
+        <p class="empty-hint" id="emptyHint" data-i18n="empty_hint">Click any element in the preview on the left to adjust its style and content here.</p>
 
         <div id="fieldsWrap" class="hidden">
 
           <details class="acc-item" open data-acc="color">
-            <summary class="acc-head">色彩</summary>
+            <summary class="acc-head" data-i18n="sec_color">Color</summary>
             <div class="acc-body row-3">
-              <label class="field"><span>背景色</span><input type="color" id="f-bg"></label>
-              <label class="field"><span>文字顏色</span><input type="color" id="f-color"></label>
-              <label class="field"><span>邊框顏色</span><input type="color" id="f-border"></label>
+              <label class="field"><span data-i18n="lbl_bg">Background</span><input type="color" id="f-bg"></label>
+              <label class="field"><span data-i18n="lbl_text_color">Text color</span><input type="color" id="f-color"></label>
+              <label class="field"><span data-i18n="lbl_border_color">Border color</span><input type="color" id="f-border"></label>
             </div>
           </details>
 
           <details class="acc-item" open data-acc="typography">
-            <summary class="acc-head">字型</summary>
+            <summary class="acc-head" data-i18n="sec_typography">Typography</summary>
             <div class="acc-body">
-              <label class="field"><span>字型家族</span>
+              <label class="field"><span data-i18n="lbl_font_family">Font family</span>
                 <select id="f-font">
-                  <option value="">保留原字型</option>
+                  <option value="" data-i18n="font_keep_original">Keep original</option>
                   <option value="Inter, sans-serif">Inter</option>
                   <option value="Sora, sans-serif">Sora</option>
-                  <option value="Georgia, serif">Georgia（襯線）</option>
+                  <option value="Georgia, serif" data-i18n="font_georgia">Georgia (serif)</option>
                   <option value="Arial, sans-serif">Arial</option>
-                  <option value="ui-monospace, monospace">等寬字</option>
+                  <option value="ui-monospace, monospace" data-i18n="font_mono_option">Monospace</option>
                 </select>
               </label>
-              <label class="field"><span>字級 <b id="f-size-val" class="range-val"></b></span>
-                <input type="range" id="f-size" min="10" max="72"></label>
-              <label class="field"><span>字重</span>
+              <label class="field"><span data-i18n="lbl_font_size">Font size</span> <b id="f-size-val" class="range-val"></b>
+                <input type="range" id="f-size" min="10" max="72">
+                <div class="range-captions"><span data-i18n="caption_small">small</span><span data-i18n="caption_large">large</span></div>
+              </label>
+              <label class="field"><span data-i18n="lbl_font_weight">Font weight</span>
                 <select id="f-weight">
                   <option value="400">Regular 400</option>
                   <option value="500">Medium 500</option>
@@ -129,57 +137,61 @@
           </details>
 
           <details class="acc-item" open data-acc="spacing">
-            <summary class="acc-head">間距與尺寸</summary>
+            <summary class="acc-head" data-i18n="sec_spacing">Spacing &amp; Size</summary>
             <div class="acc-body">
-              <label class="field"><span>內邊距 Padding <b id="f-pad-val" class="range-val"></b></span>
-                <input type="range" id="f-pad" min="0" max="64"></label>
-              <label class="field"><span>外邊距 Margin（上下） <b id="f-mar-val" class="range-val"></b></span>
-                <input type="range" id="f-mar" min="0" max="64"></label>
+              <label class="field"><span data-i18n="lbl_padding">Padding</span> <b id="f-pad-val" class="range-val"></b>
+                <input type="range" id="f-pad" min="0" max="64">
+                <div class="range-captions"><span data-i18n="caption_tight">tight</span><span data-i18n="caption_spacious">spacious</span></div>
+              </label>
+              <label class="field"><span data-i18n="lbl_margin">Margin (top/bottom)</span> <b id="f-mar-val" class="range-val"></b>
+                <input type="range" id="f-mar" min="0" max="64">
+                <div class="range-captions"><span data-i18n="caption_tight">tight</span><span data-i18n="caption_spacious">spacious</span></div>
+              </label>
 
-              <label class="field"><span>寬度</span>
+              <label class="field"><span data-i18n="lbl_width">Width</span>
                 <select id="f-width-mode">
-                  <option value="">自動（跟著內容大小，不設定）</option>
-                  <option value="px">固定寬度（像素 px）</option>
-                  <option value="%">依比例（百分比 %）</option>
+                  <option value="" data-i18n="width_auto">Auto (based on content)</option>
+                  <option value="px" data-i18n="width_px">Fixed width (px)</option>
+                  <option value="%" data-i18n="width_percent">Relative (%)</option>
                 </select>
               </label>
               <label class="field hidden" id="widthValueWrap">
-                <span>寬度數值 <b id="f-width-unit" class="range-val"></b></span>
-                <input type="number" id="f-width-value" min="0" step="1" placeholder="例如 400">
+                <span data-i18n="lbl_width_value">Width value</span> <b id="f-width-unit" class="range-val"></b>
+                <input type="number" id="f-width-value" min="0" step="1" data-i18n-placeholder="width_value_placeholder" placeholder="e.g. 400">
               </label>
             </div>
           </details>
 
           <details class="acc-item" open data-acc="layout">
-            <summary class="acc-head">版面對齊</summary>
+            <summary class="acc-head" data-i18n="sec_layout">Layout</summary>
             <div class="acc-body">
               <div class="field">
-                <span>文字對齊</span>
+                <span data-i18n="lbl_text_align">Text align</span>
                 <div class="btn-group" id="alignGroup">
-                  <button data-align="left">靠左</button>
-                  <button data-align="center">置中</button>
-                  <button data-align="right">靠右</button>
+                  <button data-align="left" data-i18n="align_left">Left</button>
+                  <button data-align="center" data-i18n="align_center">Center</button>
+                  <button data-align="right" data-i18n="align_right">Right</button>
                 </div>
               </div>
               <label class="checkbox-row">
                 <input type="checkbox" id="f-flex">
-                <span>將子元素設為 Flex 排列</span>
+                <span data-i18n="lbl_flex_toggle">Arrange children with Flex</span>
               </label>
               <div class="row-2 hidden" id="flexControls">
-                <label class="field"><span>主軸對齊</span>
+                <label class="field"><span data-i18n="lbl_justify">Main axis align</span>
                   <select id="f-justify">
-                    <option value="flex-start">靠起點</option>
-                    <option value="center">置中</option>
-                    <option value="flex-end">靠終點</option>
-                    <option value="space-between">平均分散</option>
+                    <option value="flex-start" data-i18n="justify_start">Start</option>
+                    <option value="center" data-i18n="justify_center">Center</option>
+                    <option value="flex-end" data-i18n="justify_end">End</option>
+                    <option value="space-between" data-i18n="justify_between">Space between</option>
                   </select>
                 </label>
-                <label class="field"><span>交叉軸對齊</span>
+                <label class="field"><span data-i18n="lbl_align_items">Cross axis align</span>
                   <select id="f-align-items">
-                    <option value="stretch">延展</option>
-                    <option value="flex-start">靠起點</option>
-                    <option value="center">置中</option>
-                    <option value="flex-end">靠終點</option>
+                    <option value="stretch" data-i18n="align_items_stretch">Stretch</option>
+                    <option value="flex-start" data-i18n="justify_start">Start</option>
+                    <option value="center" data-i18n="justify_center">Center</option>
+                    <option value="flex-end" data-i18n="justify_end">End</option>
                   </select>
                 </label>
               </div>
@@ -187,34 +199,36 @@
           </details>
 
           <details class="acc-item" open data-acc="interactive">
-            <summary class="acc-head">互動與動畫</summary>
+            <summary class="acc-head" data-i18n="sec_interactive">Interaction &amp; Motion</summary>
             <div class="acc-body">
-              <label class="field"><span>Hover 背景色</span><input type="color" id="f-hover"></label>
-              <label class="field"><span>過渡時間 <b id="f-trans-val" class="range-val"></b></span>
-                <input type="range" id="f-trans" min="0" max="800" step="20"></label>
+              <label class="field"><span data-i18n="lbl_hover_bg">Hover background</span><input type="color" id="f-hover"></label>
+              <label class="field"><span data-i18n="lbl_transition">Transition duration</span> <b id="f-trans-val" class="range-val"></b>
+                <input type="range" id="f-trans" min="0" max="800" step="20">
+                <div class="range-captions"><span data-i18n="caption_instant">instant</span><span data-i18n="caption_slow">slow</span></div>
+              </label>
             </div>
           </details>
 
           <details class="acc-item" open data-acc="content">
-            <summary class="acc-head">內容與元素</summary>
+            <summary class="acc-head" data-i18n="sec_content">Content &amp; Elements</summary>
             <div class="acc-body">
-              <label class="field hidden" id="textFieldWrap"><span>文字內容</span>
+              <label class="field hidden" id="textFieldWrap"><span data-i18n="lbl_text_content">Text content</span>
                 <textarea id="f-text"></textarea></label>
-              <label class="field hidden" id="imgFieldWrap"><span>圖片網址</span>
+              <label class="field hidden" id="imgFieldWrap"><span data-i18n="lbl_image_url">Image URL</span>
                 <input type="text" id="f-imgsrc"></label>
-              <label class="field hidden" id="hrefFieldWrap"><span>連結網址</span>
+              <label class="field hidden" id="hrefFieldWrap"><span data-i18n="lbl_link_url">Link URL</span>
                 <input type="text" id="f-href"></label>
               <div class="row-2">
                 <label class="field"><span>Class</span><input type="text" id="f-class"></label>
                 <label class="field"><span>ID</span><input type="text" id="f-id"></label>
               </div>
               <div class="field">
-                <span>元素操作</span>
+                <span data-i18n="lbl_element_ops">Element actions</span>
                 <div class="op-row">
-                  <button data-op="up"><span class="icon" aria-hidden="true">↑</span><span>上移</span></button>
-                  <button data-op="down"><span class="icon" aria-hidden="true">↓</span><span>下移</span></button>
-                  <button data-op="duplicate"><span class="icon" aria-hidden="true">⧉</span><span>複製</span></button>
-                  <button data-op="delete" class="danger"><span class="icon" aria-hidden="true">✕</span><span>刪除</span></button>
+                  <button data-op="up"><span class="icon" aria-hidden="true">↑</span><span data-i18n="op_up">Move up</span></button>
+                  <button data-op="down"><span class="icon" aria-hidden="true">↓</span><span data-i18n="op_down">Move down</span></button>
+                  <button data-op="duplicate"><span class="icon" aria-hidden="true">⧉</span><span data-i18n="op_duplicate">Duplicate</span></button>
+                  <button data-op="delete" class="danger"><span class="icon" aria-hidden="true">✕</span><span data-i18n="op_delete">Delete</span></button>
                 </div>
               </div>
             </div>
@@ -231,9 +245,9 @@
       </div>
 
       <div class="flow-actions">
-        <button class="btn-ghost btn" data-action="restart">重新匯入</button>
-        <button class="btn-ghost btn" id="undoBtn" data-action="undo" disabled>復原</button>
-        <button class="btn" data-action="export">下載 HTML</button>
+        <button class="btn-ghost btn" data-action="restart" data-i18n="btn_restart">Restart</button>
+        <button class="btn-ghost btn" id="undoBtn" data-action="undo" disabled data-i18n="btn_undo">Undo</button>
+        <button class="btn" data-action="export" data-i18n="btn_download">Download HTML</button>
       </div>
     </aside>
   </div>
