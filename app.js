@@ -200,6 +200,7 @@ function applyTranslations() {
 
 function setLang(l) {
   lang = l;
+  document.body.classList.toggle('lang-zh', l === 'zh');
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
   applyTranslations();
 }

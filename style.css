@@ -9,7 +9,7 @@
   --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'IBM Plex Mono',ui-monospace,monospace;
   --dur:220ms; --ease:cubic-bezier(0.30,1.2,0.5,1);
 
-  --fs-h1:22px; --fs-h2:17px; --fs-h3:14px; --fs-body:14px;
+  --fs-header:26px; --fs-h1:22px; --fs-h2:17px; --fs-h3:14px; --fs-body:14px;
   --icon-size:24px;
 }
 
@@ -18,8 +18,8 @@
 
 body{margin:0;font-family:var(--font-body);font-size:var(--fs-body);background:var(--bg-page);color:var(--text-primary);}
 
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;}
-.topbar .brand{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:var(--fs-h2);color:var(--text-primary);}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:24px 32px;}
+.topbar .brand{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:var(--fs-header);color:var(--text-primary);}
 .topbar-right{display:flex;align-items:center;gap:16px;}
 .topbar .hint{font-size:var(--fs-body);color:var(--text-secondary);}
 .lang-toggle{display:flex;gap:4px;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:3px;}
@@ -37,6 +37,13 @@ body{margin:0;font-family:var(--font-body);font-size:var(--fs-body);background:v
 }
 .dropzone{border-style:dashed;border-width:2px;}
 .dropzone h2,.error-box h2{margin:0 0 8px;font-family:var(--font-display);font-style:italic;font-weight:600;}
+
+/* CJK has no true italic — a browser-synthesized slant looks wrong, so
+   Chinese mode turns it off on every display-font heading. */
+body.lang-zh .topbar .brand,
+body.lang-zh .dropzone h2,
+body.lang-zh .error-box h2,
+body.lang-zh .toolbar-header{font-style:normal;}
 .dropzone h2{font-size:var(--fs-h1);}
 .error-box h2{font-size:var(--fs-h2);}
 .dropzone p,.error-box p,.muted{margin:0 0 20px;font-size:var(--fs-body);color:var(--text-secondary);line-height:1.6;}
